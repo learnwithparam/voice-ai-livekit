@@ -1,4 +1,4 @@
-.PHONY: help setup install dev run clean build up down logs restart clean-all
+.PHONY: help setup install dev run run-agent run-frontend clean build up down logs restart clean-all
 
 .DEFAULT_GOAL := help
 
@@ -37,8 +37,10 @@ setup: ## Initial setup (create .env, install deps)
 	else \
 		echo "$(GREEN)✓ uv is installed$(NC)"; \
 	fi
-	@echo "$(BLUE)Setting up virtual environment...$(NC)"
+	@echo "$(BLUE)Setting up backend...$(NC)"
 	@$(UV) sync
+	@echo "$(BLUE)Setting up frontend...$(NC)"
+	@cd frontend && npm install --silent
 	@echo "$(GREEN)✓ Environment ready$(NC)"
 
 install: ## Install dependencies
@@ -60,6 +62,10 @@ run: ## Start FastAPI server
 run-agent: ## Start the LiveKit voice agent worker
 	@echo "$(BLUE)Starting LiveKit voice agent...$(NC)"
 	@$(UV) run python restaurant_agent.py dev
+
+run-frontend: ## Start the Next.js frontend (http://localhost:3000)
+	@echo "$(BLUE)Starting frontend...$(NC)"
+	@cd frontend && npm run dev
 
 # ============================================================================
 # Docker
