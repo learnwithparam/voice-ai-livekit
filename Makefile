@@ -52,18 +52,25 @@ install: ## Install dependencies
 # Development
 # ============================================================================
 
-dev: setup run ## Setup and run (one command to start!)
+dev: setup ## Setup and run everything (API + Frontend + Voice Agent)
+	@echo "$(BLUE)Starting all services...$(NC)"
+	@echo "$(YELLOW)API docs: http://localhost:8000/docs$(NC)"
+	@echo "$(YELLOW)Frontend: http://localhost:3000$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to stop all$(NC)"
+	@$(UV) run uvicorn main:app --reload --host 0.0.0.0 --port 8000 & \
+	cd frontend && npm run dev & \
+	$(UV) run python restaurant_agent.py dev & \
+	wait
 
-run: ## Start FastAPI server
+run: ## Start FastAPI server only
 	@echo "$(BLUE)Starting FastAPI server...$(NC)"
-	@echo "$(YELLOW)API docs at: http://localhost:8000/docs$(NC)"
 	@$(UV) run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
-run-agent: ## Start the LiveKit voice agent worker
+run-agent: ## Start the LiveKit voice agent worker only
 	@echo "$(BLUE)Starting LiveKit voice agent...$(NC)"
 	@$(UV) run python restaurant_agent.py dev
 
-run-frontend: ## Start the Next.js frontend (http://localhost:3000)
+run-frontend: ## Start the Next.js frontend only (http://localhost:3000)
 	@echo "$(BLUE)Starting frontend...$(NC)"
 	@cd frontend && npm run dev
 
